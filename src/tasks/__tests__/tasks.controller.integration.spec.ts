@@ -18,6 +18,7 @@ describe('AuthController (integration)', () => {
 
     prisma = moduleFixture.get<PrismaService>(PrismaService);
 
+    await prisma.task.deleteMany();
     await prisma.user.deleteMany();
   });
 

@@ -1,19 +1,25 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
-import { JwtModule } from '@nestjs/jwt';
-import { AuthModule } from './auth.module';
+import { JwtService } from '@nestjs/jwt';
+import { PrismaService } from '../prisma/prisma.service';
 
 describe('AuthService', () => {
   let service: AuthService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        JwtModule.register({
-          secret: 'test-secret',
-          signOptions: { expiresIn: '1h' },
-        }),
-        AuthModule,
+      providers: [
+        AuthService,
+        JwtService,
+        {
+          provide: PrismaService,
+          useValue: {
+            user: {
+              create: jest.fn(),
+              findUnique: jest.fn(),
+            },
+          },
+        },
       ],
     }).compile();
 
