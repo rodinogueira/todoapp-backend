@@ -143,7 +143,7 @@ http://localhost:3000
 
 ### Criar Tarefa
 
-**POST** `/tasks`
+- **POST** `/tasks`
 
 **Body JSON:**
 
@@ -170,7 +170,7 @@ http://localhost:3000
 
 ### Listar Todas as Tarefas
 
-**GET** `/tasks`
+- **GET** `/tasks`
 
 #### Response:
 
@@ -190,7 +190,7 @@ http://localhost:3000
 
 ### Atualizar Tarefa
 
-**PUT** `/tasks/:id`
+- **PUT** `/tasks/:id`
 
 **Body JSON:**
 
@@ -206,7 +206,7 @@ http://localhost:3000
 
 ### Remover Tarefa
 
-**DELETE** `/tasks/:id`
+- **DELETE** `/tasks/:id`
 
 #### Response esperado:
 
