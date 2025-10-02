@@ -26,4 +26,16 @@ describe('TasksController', () => {
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
+
+  it('should create a task', async () => {
+    const dto = { title: 'Test Task', description: 'Descrição' };
+    const userId = 1;
+    const mockReq = { user: { sub: 1 } };
+    const result = await controller.create(mockReq as any, dto as any);
+
+    expect(mockTasksService.create).toHaveBeenCalledWith(userId, dto);
+    expect(result).toEqual({ id: 1, title: 'Test Task' });
+  });
+
+  
 });
