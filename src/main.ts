@@ -15,6 +15,7 @@ async function bootstrap() {
     .setTitle('TodoApp API')
     .setDescription('API de exemplo com NestJS + Swagger')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
