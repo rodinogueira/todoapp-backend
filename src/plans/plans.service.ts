@@ -23,4 +23,29 @@ export class PlansService {
     console.log(`Subscribe user: ${user}`)
     return { message: `Plano ${planId} assinado com sucesso`, user };
   }
+
+  async changePlan(userId: number, planId: number | null) {
+    const data: any = {
+      isPlanActivated: !!planId,
+    };
+
+    if (planId) {
+      data.plan = { connect: { id: planId } };
+    } else {
+      data.plan = { disconnect: true }; // remove plano
+    }
+
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data,
+      include: { plan: true },
+    });
+
+    if (!user.plan) {
+      throw new Error('Usuário não tem plano associado');
+    }
+
+    return { message: planId ? `Plano alterado para ${user.plan.name}` : 'Plano desativado', user };
+  }
+
 }
