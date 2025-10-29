@@ -47,4 +47,22 @@ model Plans {
   description String?
   price       Float?
   users       User[] // relação inversa
+  features    PlanFeature[]
+}
+
+model Feature {
+  id          Int           @id @default(autoincrement())
+  name        String        @unique
+  description String?
+  plans       PlanFeature[]
+}
+
+model PlanFeature {
+  planId     Int
+  featureId  Int
+
+  plan       Plans      @relation(fields: [planId], references: [id], onDelete: Cascade)
+  feature    Feature   @relation(fields: [featureId], references: [id], onDelete: Cascade)
+
+  @@id([planId, featureId])
 }
