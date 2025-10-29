@@ -17,7 +17,15 @@ model User {
   name     String
   email    String  @unique
   password String
+  plan     Plan    @default(BRONZE)
   tasks    Task[]  // relação com Task
+}
+
+// Enum de planos
+enum Plan {
+  BRONZE
+  SILVER
+  GOLD
 }
 
 model Task {

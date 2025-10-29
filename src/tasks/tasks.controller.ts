@@ -14,30 +14,32 @@ import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { PlanGuard } from '../auth/plan.guard';
+import { RequirePlan } from '../auth/require-plan.decorator';
+import { Plan } from '../auth/plan.enum';
 
 @ApiTags('Tasks')
 @ApiBearerAuth()
 @Controller('tasks')
+@UseGuards(JwtAuthGuard, PlanGuard)
 export class TasksController {
   constructor(private tasksService: TasksService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post()
   @ApiBody({ type: CreateTaskDto })
   @ApiResponse({ status: 201, description: 'Task criada com sucesso' })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
+  @RequirePlan(Plan.BRONZE)
   create(@Request() req, @Body() dto: CreateTaskDto) {
     return this.tasksService.create(req.user.sub, dto);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get()
   @ApiResponse({ status: 200, description: 'Lista de tasks' })
   findAll(@Request() req) {
     return this.tasksService.findAll(req.user.sub);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 200, description: 'Task encontrada' })
@@ -45,17 +47,16 @@ export class TasksController {
     return this.tasksService.findOne(req.user.sub, +id);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Put(':id')
   @ApiParam({ name: 'id', type: Number })
   @ApiBody({ type: UpdateTaskDto })
   @ApiResponse({ status: 200, description: 'Task atualizada com sucesso' })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
+  @RequirePlan(Plan.SILVER)
   update(@Request() req, @Param('id') id: string, @Body() dto: UpdateTaskDto) {
     return this.tasksService.update(req.user.sub, +id, dto);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 200, description: 'Task deletada com sucesso' })

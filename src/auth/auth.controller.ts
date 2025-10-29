@@ -3,6 +3,7 @@ import { ApiTags, ApiBody, ApiResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { Plan } from './plan.enum';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -14,7 +15,7 @@ export class AuthController {
   @ApiResponse({ status: 201, description: 'Usuário registrado com sucesso' })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
   async register(@Body() dto: RegisterDto) {
-    return this.authService.register(dto.name, dto.email, dto.password);
+    return this.authService.register(dto.name, dto.email, dto.password, Plan.BRONZE);
   }
 
   @Post('login')
