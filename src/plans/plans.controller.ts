@@ -25,14 +25,14 @@ export class PlansController {
   }
 
   // Alterar ou desativar plano
-  @Patch('change/:id') // planId opcional para desativar
+  @Patch('change/:id') // planId opcional para desativar foi substituido por :id
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiResponse({ status: 200, description: 'Plano alterado com sucesso' })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
   async changePlan(@Param('id') planId: string, @Req() req) {
     const userId = req.user.sub;
-    return this.plansService.changePlan(userId, planId ? parseInt(planId) : null);
+    return this.plansService.changePlan(userId, planId ? +planId : null);
   }
 
   @Delete(':id')
@@ -43,5 +43,14 @@ export class PlansController {
   async deletePlan(@Req() req) {
     const userId = req.user.sub;
     return this.plansService.deletePlan(userId);
+  }
+
+  @Get('features')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiResponse({ status: 200, description: 'Retorna as features do plano do usuário' })
+  async getFeatures(@Req() req) {
+    const userId = req.user.sub;
+    return this.plansService.getUserPlanFeatures(userId);
   }
 }

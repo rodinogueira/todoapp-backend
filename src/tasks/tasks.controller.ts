@@ -29,7 +29,7 @@ export class TasksController {
   @ApiBody({ type: CreateTaskDto })
   @ApiResponse({ status: 201, description: 'Task criada com sucesso' })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
-  @RequirePlan(Plan.BRONZE)
+  @RequirePlan(Plan.GOLD)
   create(@Request() req, @Body() dto: CreateTaskDto) {
     return this.tasksService.create(req.user.sub, dto);
   }
@@ -52,14 +52,14 @@ export class TasksController {
   @ApiBody({ type: UpdateTaskDto })
   @ApiResponse({ status: 200, description: 'Task atualizada com sucesso' })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
-  @RequirePlan(Plan.SILVER)
   update(@Request() req, @Param('id') id: string, @Body() dto: UpdateTaskDto) {
     return this.tasksService.update(req.user.sub, +id, dto);
   }
-
+  
   @Delete(':id')
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 200, description: 'Task deletada com sucesso' })
+  @ApiResponse({ status: 400, description: 'Dados inválidos' })
   remove(@Request() req, @Param('id') id: string) {
     return this.tasksService.remove(req.user.sub, +id);
   }
