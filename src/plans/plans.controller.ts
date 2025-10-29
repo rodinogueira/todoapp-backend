@@ -44,13 +44,4 @@ export class PlansController {
     const userId = req.user.sub;
     return this.plansService.deletePlan(userId);
   }
-
-  @Get('features')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiResponse({ status: 200, description: 'Retorna as features do plano do usuário' })
-  async getFeatures(@Req() req) {
-    const userId = req.user.sub;
-    return this.plansService.getUserPlanFeatures(userId);
-  }
 }

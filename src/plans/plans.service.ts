@@ -61,31 +61,4 @@ export class PlansService {
     console.log(`Plano removido do usuário: ${user}`);
     return { message: 'Plano removido com sucesso', user };
   }
-
-  async getUserPlanFeatures(userId: number) {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      include: { plan: true },
-    });
-
-    if (!user || !user.plan) {
-      return { message: 'Usuário não tem plano ativo', features: [] };
-    }
-
-    let features: string[] = [];
-
-    switch (user.plan.name) {
-      case 'BRONZE':
-        features = ['Acesso básico', 'Suporte limitado'];
-        break;
-      case 'SILVER':
-        features = ['Acesso básico', 'Suporte prioritário', 'Funcionalidade intermediária'];
-        break;
-      case 'GOLD':
-        features = ['Acesso total', 'Suporte premium', 'Funcionalidades completas', 'Relatórios avançados'];
-        break;
-    }
-
-    return { plan: user.plan.name, features };
-  }
 }
