@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Patch, Req, UseGuards } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Patch, Req, UseGuards } from '@nestjs/common';
 import { PlansService } from './plans.service';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -14,24 +14,34 @@ export class PlansController {
     return this.plansService.findAll();
   }
 
-  @Patch(':planId/subscribe')
+  @Patch(':id/subscribe')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiResponse({ status: 200, description: 'Plano assinado com sucesso' })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
-  async subscribe(@Param('planId') planId: string, @Req() req) {
+  async subscribe(@Param('id') planId: string, @Req() req) {
     const userId = req.user.sub;
     return this.plansService.subscribe(userId, parseInt(planId));
   }
 
-    // Alterar ou desativar plano
-  @Patch('change/:planId') // planId opcional para desativar
+  // Alterar ou desativar plano
+  @Patch('change/:id') // planId opcional para desativar
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiResponse({ status: 200, description: 'Plano alterado com sucesso' })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
-  async changePlan(@Param('planId') planId: string, @Req() req) {
+  async changePlan(@Param('id') planId: string, @Req() req) {
     const userId = req.user.sub;
     return this.plansService.changePlan(userId, planId ? parseInt(planId) : null);
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiResponse({ status: 200, description: 'Plano removido com sucesso' })
+  @ApiResponse({ status: 400, description: 'Dados inválidos' })
+  async deletePlan(@Req() req) {
+    const userId = req.user.sub;
+    return this.plansService.deletePlan(userId);
   }
 }

@@ -48,4 +48,18 @@ export class PlansService {
     return { message: planId ? `Plano alterado para ${user.plan.name}` : 'Plano desativado', user };
   }
 
+  async deletePlan(userId: number) {
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        plan: { disconnect: true },   // remove o plano
+        isPlanActivated: false,       // marca como desativado
+      },
+      include: { plan: true },       // retorna detalhes do plano (agora null)
+    });
+
+    console.log(`Plano removido do usuário: ${user}`);
+    return { message: 'Plano removido com sucesso', user };
+  }
+
 }
