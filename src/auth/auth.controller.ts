@@ -15,7 +15,7 @@ export class AuthController {
   @ApiResponse({ status: 201, description: 'Usuário registrado com sucesso' })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
   async register(@Body() dto: RegisterDto) {
-    return this.authService.register(dto.name, dto.email, dto.password, Plan.BRONZE);
+    return this.authService.register(dto.name, dto.email, dto.password);
   }
 
   @Post('login')

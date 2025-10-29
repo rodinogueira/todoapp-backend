@@ -18,6 +18,7 @@ model User {
   email    String  @unique
   password String
   planId           Int?
+  isPlanActivated Boolean @default(false)
   plan             Plans?   @relation(fields: [planId], references: [id])
   tasks    Task[]  // relação com Task
 }
