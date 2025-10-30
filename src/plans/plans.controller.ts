@@ -4,9 +4,10 @@ import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @ApiTags('plans')
+@UseGuards(JwtAuthGuard)
 @Controller('plans')
 export class PlansController {
-  constructor(private plansService: PlansService) {}
+  constructor(private plansService: PlansService) { }
 
   @Get()
   @ApiResponse({ status: 200, description: 'Lista todos os planos disponíveis' })
@@ -15,7 +16,6 @@ export class PlansController {
   }
 
   @Patch(':id/subscribe')
-  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiResponse({ status: 200, description: 'Plano assinado com sucesso' })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
@@ -26,7 +26,6 @@ export class PlansController {
 
   // Alterar ou desativar plano
   @Patch('change/:id') // planId opcional para desativar foi substituido por :id
-  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiResponse({ status: 200, description: 'Plano alterado com sucesso' })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
@@ -36,7 +35,6 @@ export class PlansController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiResponse({ status: 200, description: 'Plano removido com sucesso' })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
