@@ -70,6 +70,18 @@ npx prisma generate
 npx prisma migrate dev --name init
 ```
 
+## 🌱 Populando o Banco de Dados (Seeds)
+
+1. Para adicionar dados iniciais no banco:
+
+Certifique-se de ter configurado o arquivo de seed em prisma/seed.ts.
+
+Execute o comando:
+
+```bash
+npx prisma db seed
+```
+
 ## 🚀 Rodando a Aplicação
 
 1. Inicie o servidor em modo de desenvolvimento:
