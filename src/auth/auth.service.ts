@@ -2,50 +2,69 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
+import { LoggerService } from 'src/logger/logger.service';
+import { ErrorResponse } from 'src/common/error-response';
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
     private prisma: PrismaService,
-  ) {}
+    private readonly logger: LoggerService
+  ) { }
 
   async register(
     name: string,
     email: string,
     password: string,
   ) {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    
-    const plan = await this.prisma.plans.findUnique({
-      where: { name: 'BRONZE' },
-    });
+    try {
+      const hashedPassword = await bcrypt.hash(password, 10);
 
-    if (!plan) throw new Error('Plano padrão não encontrado');
+      const plan = await this.prisma.plans.findUnique({
+        where: { name: 'BRONZE' },
+      });
 
-    console.log(plan);
+      if (!plan) throw new Error('Plano padrão não encontrado');
 
-    const existingUser = await this.prisma.user.findUnique({
-      where: { email: email },
-    });
+      console.log(plan);
 
-    if (existingUser) {
-      throw new Error('Email já cadastrado');
-    }
+      const existingUser = await this.prisma.user.findUnique({
+        where: { email: email },
+      });
 
-    const user = await this.prisma.user.create({
-      data: {
-        name,
-        email,
-        password: hashedPassword,
-        plan: {
-          connect: { id: plan.id }, //connect não cria um novo plano, apenas associa o usuário a um plano existente.
+      if (existingUser) {
+        throw new Error('Email já cadastrado');
+      }
+
+      const user = await this.prisma.user.create({
+        data: {
+          name,
+          email,
+          password: hashedPassword,
+          plan: {
+            connect: { id: plan.id }, //connect não cria um novo plano, apenas associa o usuário a um plano existente.
+          },
+          isPlanActivated: true
         },
-        isPlanActivated: true
-      },
-      // include: { plan: true }, // incluir dados do plano
-    });
-    return user;
+        // include: { plan: true }, // incluir dados do plano
+      });
+      this.logger.debug(`${user}`)
+      this.logger.warn(`Você está perto de ser registrado: ${user}`)
+      this.logger.info('Loading.');
+      this.logger.info('Loading..');
+      this.logger.info('Loading...');
+      this.logger.info(`Parábens!, ${user}`);
+      this.logger.info('New user created', 'Register', user);
+      return user;
+    } catch (error) {
+      throw new ErrorResponse({
+        message: 'Erro ao atualizar perfil do usuário',
+        details: error.meta,
+        statusCode: 400,
+        errorsCode: error.code,
+      });
+    }
   }
 
   async login(email: string, password: string) {

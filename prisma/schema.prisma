@@ -66,3 +66,14 @@ model PlanFeature {
 
   @@id([planId, featureId])
 }
+
+model Log {
+  id         String   @id @default(uuid())
+  id_company String?
+  type       String
+  status_code Int
+  msg        String
+  origin     String
+  json       String? @db.Text
+  created_at DateTime @default(now())
+}

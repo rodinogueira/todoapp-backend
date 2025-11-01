@@ -3,6 +3,7 @@ import { AuthModule } from './auth/auth.module';
 import { TasksModule } from './tasks/tasks.module';
 import { PlansModule } from './plans/plans.module';
 import { ConfigModule } from '@nestjs/config';
+import { LoggerModule } from './logger/logger.module';
 
 @Module({
   imports: [
@@ -12,7 +13,8 @@ import { ConfigModule } from '@nestjs/config';
     AuthModule,
     TasksModule,
     PlansModule,
+    LoggerModule
   ],
   exports: [TasksModule],
 })
-export class AppModule {}
+export class AppModule { }
