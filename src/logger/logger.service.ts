@@ -39,7 +39,11 @@ export class LoggerService {
 
     async error(message: string, context?: string, data?: LogData) {
         // Log no console ou Pino
-        console.error(`[${context}]`, message, data);
+        logger.error(
+            { context, ...data }, // ou { context, data } dependendo do que quer registrar
+            message
+        );
+
 
         // Salvar no DB
         await this.prisma.log.create({

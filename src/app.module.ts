@@ -9,6 +9,7 @@ import { LoggerModule } from './logger/logger.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: ".env",
     }),
     AuthModule,
     TasksModule,

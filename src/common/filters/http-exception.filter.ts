@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { LoggerService } from 'src/logger/logger.service';
+import { ErrorResponse } from '../error-response';
 
 export enum LogType {
     INFO = 'INFO',
@@ -32,7 +33,9 @@ export interface LogData {
     referer?: string | null;
     stack?: string | null;
     details?: any;
-}@Catch()
+}
+
+@Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
     constructor(private readonly logger: LoggerService) { }
 
@@ -41,21 +44,19 @@ export class HttpExceptionFilter implements ExceptionFilter {
         const request = ctx.getRequest<Request>();
         const response = ctx.getResponse<Response>();
 
-        const status =
-            exception instanceof HttpException
-                ? exception.getStatus()
-                : HttpStatus.INTERNAL_SERVER_ERROR;
+        let status = HttpStatus.INTERNAL_SERVER_ERROR;
+        let message = 'Internal server error';
+        let errorsCode = undefined;
+        let details = undefined;
 
-        const exceptionResponse =
-            exception instanceof HttpException
-                ? (exception.getResponse() as any)
-                : { message: 'Internal server error' };
-
-        const message =
-            exceptionResponse.message ||
-            exception.message ||
-            'Internal server error';
-
+        if (exception instanceof ErrorResponse) {
+            status = exception.statusCode;
+            message = exception.message;
+            errorsCode = exception.errorsCode;
+            details = exception.details;
+        } else if (exception instanceof Error) {
+            message = exception.message;
+        }
         const logData: LogData = {
             companyId: (request as any).user?.companyId ?? null,
             type: 'ERROR',
@@ -70,18 +71,35 @@ export class HttpExceptionFilter implements ExceptionFilter {
             userAgent: request.headers['user-agent'],
             referer: request.headers['referer'],
             stack: exception.stack ?? null,
-            details: exceptionResponse.details ?? null,
+            details: exception.details ?? null,
         };
 
         await this.logger.error(message, 'HttpExceptionFilter', logData);
+
+        //   private getCustomErrorCode(exception: unknown): string {
+        //     if (exception instanceof HttpException) {
+        //     const status = exception.getStatus();
+        //     switch (status) {
+        //         case HttpStatus.BAD_REQUEST:
+        //         return 'VALIDATION_ERROR';
+        //         case HttpStatus.UNAUTHORIZED:
+        //         return 'UNAUTHORIZED_ACCESS';
+        //         case HttpStatus.NOT_FOUND:
+        //         return 'RESOURCE_NOT_FOUND';
+        //         default:
+        //         return 'GENERIC_HTTP_ERROR';
+        //     }
+        //     }
+        //     return 'INTERNAL_ERROR';
+        // }
 
         // Retorno padronizado
         response.status(status).json({
             success: false,
             statusCode: status,
             message,
-            errors: exceptionResponse.details ?? null,
-            errorsCode: exceptionResponse.errorsCode ?? null,
+            errors: exception.details ?? null,
+            errorsCode: exception.errorsCode ?? null,
         });
     }
 }

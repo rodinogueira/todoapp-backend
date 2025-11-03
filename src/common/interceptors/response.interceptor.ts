@@ -22,7 +22,7 @@ export class ResponseInterceptor implements NestInterceptor {
 
         return next.handle().pipe(
             map((data) => {
-                // ✅ Se não for erro, retorna a resposta normalmente
+                // Se não for erro, retorna a resposta normalmente
                 if (!(data instanceof ErrorResponse)) {
                     return {
                         success: true,
@@ -30,7 +30,7 @@ export class ResponseInterceptor implements NestInterceptor {
                     };
                 }
 
-                // ⚠️ Caso seja um erro customizado
+                // Caso seja um erro customizado
                 const status = data.statusCode ?? 500;
 
                 // Envia log estruturad
@@ -48,18 +48,18 @@ export class ResponseInterceptor implements NestInterceptor {
                 return;
             }),
 
-            // 🔥 Garante que exceções não tratadas sejam logadas também
-            // catchError((error) => {
-            //     this.logger.error('Unhandled Exception', 'ResponseInterceptor', error);
+            // Garante que exceções não tratadas sejam logadas também
+            catchError((error) => {
+                this.logger.error('Unhandled Exception', 'ResponseInterceptor', error);
 
-            //     reply.status(500).send({
-            //         success: false,
-            //         statusCode: 500,
-            //         message: 'Internal Server Error',
-            //     });
+                reply.status(500).send({
+                    success: false,
+                    statusCode: 500,
+                    message: 'Internal Server Error',
+                });
 
-            //     throw error;
-            // }),
+                throw error;
+            }),
         );
     }
 }
